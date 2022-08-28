@@ -7,6 +7,16 @@ canvas.height = 600
 const gravity = .7
 const pipeSpeed = 2
 
+let score = 0
+let bestScore = 0
+
+let isDead = false
+let isStart = false
+
+function start(){
+    isStart = true
+}
+
 class Player{
     constructor({position, velocity, color}){
         this.position = position
@@ -119,27 +129,88 @@ function pipeRandomizer(currentPipe){
     }
 }
 
+function checkWin(player, currentPipe){
+    if(
+        125 > currentPipe.posPipe1.x && 125 < currentPipe.posPipe1.x + 2 &&
+        player.position.y > currentPipe.posPipe1.y + currentPipe.sizePipe1.h && player.position.y < currentPipe.posPipe2.y
+        ){
+        score++;
+    }
+}
+
+function checkCollision(player, currentPipe){
+    if(175 >= currentPipe.posPipe1.x && isDead === false && 125 <= currentPipe.posPipe1.x){
+            if(player.position.y <= currentPipe.posPipe1.y + currentPipe.sizePipe1.h || player.position.y >= currentPipe.posPipe2.y){
+                isDead = true;
+                isStart = false
+            }
+    }
+    if(player.position.y < -50 || player.position.y > 600 && isDead === false){
+        isDead = true;
+        isStart = false
+    }
+}
+
 function animate(){
     requestAnimationFrame(animate);
+    if(isStart){
+        if(!isDead){
+            //draw background
+            ctx.fillStyle = 'rgb(59, 186, 255)'
+            ctx.fillRect(0,0,canvas.width, canvas.height)
+    
+            player.update()
+    
+            pipeRandomizer(pipes)
+            pipeRandomizer(pipes2)
+            pipes.update()
+            pipes2.update()
+    
+            checkWin(player, pipes)
+            checkWin(player, pipes2)
+            document.getElementById('currentScore').innerHTML = 'Score '+score
+            checkCollision(player, pipes)
+            checkCollision(player, pipes2)
+        }else if(isDead){
+            if(score > bestScore){
+                bestScore = score
+                document.getElementById('currentScore').innerHTML = 'Score '+score
+                document.getElementById('bestScore').innerHTML = 'Best score '+bestScore
+            }
+    
+        }
+    }
+    
+    
+}
 
-    //draw background
-    ctx.fillStyle = 'rgb(59, 186, 255)'
-    ctx.fillRect(0,0,canvas.width, canvas.height)
-
-    player.update()
-
-    pipeRandomizer(pipes);
-    pipeRandomizer(pipes2)
-    pipes.update()
-    pipes2.update()
+function reset(){
+    if(isDead){
+        pipes.posPipe1.x = 310
+        pipes.posPipe2.x = 310
+        pipes2.posPipe1.x = 610
+        pipes2.posPipe2.x = 610
+        player.position.y = 300
+        player.velocity.x = 0
+        player.velocity.y = 0
+        pipes.velocity.x = 0
+        pipes.velocity.y = 0
+        pipes2.velocity.x = 0
+        pipes2.velocity.y = 0
+        isDead = false
+        score = 0
+        isStart = false
+    }
 }
 
 animate()
 
 window.addEventListener('keydown', (event) => {
-    switch(event.key){
-        case ' ':
-            player.velocity.y = -10
-            break
+    if(!isDead){
+        switch(event.key){
+            case ' ':
+                player.velocity.y = -10
+                break
+        }
     }
 });

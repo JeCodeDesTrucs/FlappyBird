@@ -6,6 +6,7 @@
 
 body{
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh;
@@ -13,4 +14,10 @@ body{
 
 canvas{
     border: solid .2rem black;
+}
+
+.ui{
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
 }

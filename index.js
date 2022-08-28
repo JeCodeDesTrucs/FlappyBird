@@ -184,6 +184,8 @@ function animate(){
     
 }
 
+animate()
+
 function reset(){
     if(isDead){
         pipes.posPipe1.x = 310
@@ -203,7 +205,7 @@ function reset(){
     }
 }
 
-animate()
+
 
 window.addEventListener('keydown', (event) => {
     if(!isDead){
@@ -214,3 +216,7 @@ window.addEventListener('keydown', (event) => {
         }
     }
 });
+
+window.addEventListener('touchstart', () => {
+    player.velocity.y = -10
+})
